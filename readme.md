@@ -1,5 +1,5 @@
 * Dependencies
-  Examples are implemented as Razor pages dotnet core project and it depended only from dotnet core 2.1
+  The examples are implemented as Razor pages dotnet core project and it depended only from dotnet core 2.1
 
 * How to execute
   - install dotnet core 2.1
@@ -7,7 +7,7 @@
   - type dotnet run
   - open localhost:5000 in Browser
 
-* What is include?
+* What is included?
   - example for login and getting session id process
   - example for getting List of records on any screen in System
   - example for updating record on any screen in System
