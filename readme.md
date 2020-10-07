@@ -20,12 +20,12 @@
 
 * Overall System Design Notes:
 
-- All of the grid screens in the system are called "SomethingList"
-- All of the detail screens off of the grid screens are called "SomethingHeader"
-- If the data set we are talking about is a parent / child data-set, we use the terminology Header/Detail
-- So, for example, Order Parent Information would be in the OrderHeader Table, the details would be in the OrderDetails table
-- Grid Screens are List / Details or List / Header depending on the relationships
-- All table names and field names are given plain-English names so there should be nothing to figure out. 
+  - All of the grid screens in the system are called "SomethingList"
+  - All of the detail screens off of the grid screens are called "SomethingHeader"
+  - If the data set we are talking about is a parent / child data-set, we use the terminology Header/Detail
+  - So, for example, Order Parent Information would be in the OrderHeader Table, the details would be in the OrderDetails table
+  - Grid Screens are List / Details or List / Header depending on the relationships
+  - All table names and field names are given plain-English names so there should be nothing to figure out. 
 
 This above information will help you find the API to call
 
@@ -39,19 +39,19 @@ SO, basically to know which API to call for which function, you would find that 
 
 * Some Specific API Location Examples:
 
-- Create a company - CompanyList API
+  - Create a company - CompanyList API
 
-- Create some divisions and departments of that company - DivisionsList, DepartmentsList (Remember Department is a child of Division which is a child of Company)
+  - Create some divisions and departments of that company - DivisionsList, DepartmentsList (Remember Department is a child of Division which is a child of Company)
 
-- Create warehouses for each of them  - WarehouseList API
+  - Create warehouses for each of them  - WarehouseList API
 
-- Create items - ItemsList API
+  - Create items - ItemsList API
 
-- Create orders - OrderHeaderList API (Working examples are here: https://github.com/stfbinc/EnterpriseCart/ (EnterpriseCart API Sample App)
+  - Create orders - OrderHeaderList API (Working examples are here: https://github.com/stfbinc/EnterpriseCart/ (EnterpriseCart API Sample App)
 
-- Create invoices - InvoiceHeaderList API (Works the same as orders)
+  - Create invoices - InvoiceHeaderList API (Works the same as orders)
 
-- Get some reports about above functionalities  - Report API Calls start with RPT
+  - Get some reports about above functionalities  - Report API Calls start with RPT
 
 
 
