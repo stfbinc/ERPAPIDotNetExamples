@@ -1,5 +1,0 @@
-@page
-@model ListModel
-@{
-    ViewData["Title"] = "The List of records";
-}

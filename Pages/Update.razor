@@ -2,22 +2,19 @@
 @using Newtonsoft.Json
 @using Newtonsoft.Json.Linq
 
-@{
-ViewData["Title"] = "Record updating";
-}
-<h1>Request URL:</h1>@Model.login_url
+<h1>Request URL:</h1>@login_url
 <br/>
-<h1>Request Method:</h1>@Model.login_method
+<h1>Request Method:</h1>@login_method
 <br/>
-<h1>Request Body:</h1>@Model.login_request
+<h1>Request Body:</h1>@login_request
 <br/>
 <h1>Response:</h1>See console for output of application
 <br/>
 <div style="border:1px solid red;"></div>
 
-<h1>Request URL:</h1>@Model.get_url
+<h1>Request URL:</h1>@get_url
 <br/>
-<h1>Request Method:</h1>@Model.get_method
+<h1>Request Method:</h1>@get_method
 <br/>
 <h1>Request Body:</h1> None
 <br/>
@@ -25,9 +22,9 @@ ViewData["Title"] = "Record updating";
 <br/>
 <div style="border:1px solid red;"></div>
 
-<h1>Request URL:</h1>@Model.update_url
+<h1>Request URL:</h1>@update_url
 <br/>
-<h1>Request Method:</h1>@Model.update_method
+<h1>Request Method:</h1>@update_method
 <br/>
 <h1>Request Body:</h1> See code in Pages/update.cshtml.cs
 <br/>
@@ -35,9 +32,9 @@ ViewData["Title"] = "Record updating";
 <br/>
 <div style="border:1px solid red;"></div>
 
-<h1>Request URL:</h1>@Model.list_url
+<h1>Request URL:</h1>@list_url
 <br/>
-<h1>Request Method:</h1>@Model.list_method
+<h1>Request Method:</h1>@list_method
 <br/>
 <h1>Request Body:</h1> None
 <br/>

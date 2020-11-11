@@ -1,7 +1,0 @@
-@page
-@model LoginModel
-@{
-ViewData["Title"] = "Login Example";
-}
-
-

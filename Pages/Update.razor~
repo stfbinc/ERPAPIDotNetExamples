@@ -1,0 +1,129 @@
+@page "/Update"
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+
+@{
+ViewData["Title"] = "Record updating";
+}
+<h1>Request URL:</h1>@Model.login_url
+<br/>
+<h1>Request Method:</h1>@Model.login_method
+<br/>
+<h1>Request Body:</h1>@Model.login_request
+<br/>
+<h1>Response:</h1>See console for output of application
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@Model.get_url
+<br/>
+<h1>Request Method:</h1>@Model.get_method
+<br/>
+<h1>Request Body:</h1> None
+<br/>
+<h1>Response:</h1>See console for output of application
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@Model.update_url
+<br/>
+<h1>Request Method:</h1>@Model.update_method
+<br/>
+<h1>Request Body:</h1> See code in Pages/update.cshtml.cs
+<br/>
+<h1>Response:</h1>See console for output of application
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@Model.list_url
+<br/>
+<h1>Request Method:</h1>@Model.list_method
+<br/>
+<h1>Request Body:</h1> None
+<br/>
+<h1>Response:</h1>See console for output of application
+<br/>
+<br/>
+
+@code{
+    /*
+    Request URL for Login action
+    */
+    public string login_url = "/index.php?page=api&module=auth&action=login";
+    public string login_method = "POST";
+    public string login_request = "";
+
+    /* 
+    Request URL for List action
+    For this example we using AccountsReceivable/OrderProcessing/ViewOrders Enterprise screen, but you can use any screen from list in file EnterpriseScreens.json
+    */
+    public string list_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrders&action=list&session_id=";
+    public string list_method = "GET";
+
+    /* 
+    Request URL for Get action
+    id contains '__' separated list from Company, Division, Department and OrderNumber
+    We calling it keyString. Each record had own keyString
+    */
+    public string get_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrders&action=get&id=DINOS__DEFAULT__DEFAULT__2372&session_id=";
+    public string get_method = "GET";
+
+    /* 
+    Request URL for Update action
+    */
+    public string update_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrders&action=update&id=DINOS__DEFAULT__DEFAULT__2372&session_id=";
+    public string update_method = "POST";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender){
+        APIRequests();
+    }
+
+    public async void APIRequests(){
+        dynamic body = new JObject();
+        /*Credentials for Login request*/
+        body.CompanyID = "DINOS";
+        body.DivisionID = "DEFAULT";
+        body.DepartmentID = "DEFAULT";
+        body.EmployeeID = "Demo";
+        body.EmployeePassword = "Demo";
+        body.language = "english";
+
+        /*
+        Login request. Request Body is JSON, Response body is JSON
+        Response is json like:
+        {
+            "session_id": "aud8s4l449frcnponmv1ithvoo",
+            "companies": [],
+            "message": "ok"
+        }
+        Where session_id is uuid, which used for any other API request
+        */
+        dynamic sessionResult = JObject.Parse(await(API.doRequest(this.login_method, this.login_url, this.login_request = body.ToString())));
+        Console.WriteLine(sessionResult);
+        
+        /*
+        Forms Get Request
+        Getting order record for updating
+        */
+        dynamic order = JObject.Parse(await(API.doRequest(get_method, get_url + sessionResult.session_id, null)));
+        order.CustomerID = "dland";
+        order.CustomerPhone = "79998888888";
+
+        /*
+        Forms Update Request
+        Updating order record 
+        */
+        await(API.doRequest(this.update_method, update_url + sessionResult.session_id, order.ToString()));
+        /*                         url: `../index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrders&action=update&id=DINOS__DEFAULT__DEFAULT__2110&session_id=${session.session_id}`,
+        type: 'POST',
+        data : JSON.stringify(data),
+        contentType : 'application/json'
+    });
+    */
+    /*
+    Forms List Request.
+    Getting list of all Opened Orders
+    */
+    Console.WriteLine(await(API.doRequest(list_method, list_url + sessionResult.session_id, null)));
+}
+}

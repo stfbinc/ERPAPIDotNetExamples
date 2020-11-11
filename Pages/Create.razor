@@ -2,23 +2,20 @@
 @using Newtonsoft.Json
 @using Newtonsoft.Json.Linq
 
-@{
-ViewData["Title"] = "Record creating";
-}
-<h1>Request URL:</h1>@Model.login_url
+<h1>Request URL:</h1>@login_url
 <br/>
-<h1>Request Method:</h1>@Model.login_method
+<h1>Request Method:</h1>@login_method
 <br/>
-<h1>Request Body:</h1>@Model.login_request
+<h1>Request Body:</h1>@login_request
 <br/>
 <h1>Response:</h1>See console for output of application
 <br/>
 <br/>
 <div style="border:1px solid red;"></div>
 
-<h1>Request URL:</h1>@Model.dictionaries_url
+<h1>Request URL:</h1>@dictionaries_url
 <br/>
-<h1>Request Method:</h1>@Model.dictionaries_method
+<h1>Request Method:</h1>@dictionaries_method
 <br/>
 <h1>Request Body:</h1> None
 <br/>
@@ -26,19 +23,9 @@ ViewData["Title"] = "Record creating";
 <br/>
 <div style="border:1px solid red;"></div>
 
-<h1>Request URL:</h1>@Model.emptyheader_url
+<h1>Request URL:</h1>@emptyheader_url
 <br/>
-<h1>Request Method:</h1>@Model.emptyheader_method
-<br/>
-<h1>Request Body:</h1> None
-<br/>
-<h1>Response:</h1>See console for output of application
-<br/>
-<div style="border:1px solid red;"></div>
-
-<h1>Request URL:</h1>@Model.emptydetail_url
-<br/>
-<h1>Request Method:</h1>@Model.emptydetail_method
+<h1>Request Method:</h1>@emptyheader_method
 <br/>
 <h1>Request Body:</h1> None
 <br/>
@@ -46,19 +33,9 @@ ViewData["Title"] = "Record creating";
 <br/>
 <div style="border:1px solid red;"></div>
 
-<h1>Request URL:</h1>@Model.createheader_url
+<h1>Request URL:</h1>@emptydetail_url
 <br/>
-<h1>Request Method:</h1>@Model.createheader_method
-<br/>
-<h1>Request Body:</h1> None
-<br/>
-<h1>Response:</h1>See console for output of application
-<br/>
-<div style="border:1px solid red;"></div>
-
-<h1>Request URL:</h1>@Model.createdetail_url
-<br/>
-<h1>Request Method:</h1>@Model.createdetail_method
+<h1>Request Method:</h1>@emptydetail_method
 <br/>
 <h1>Request Body:</h1> None
 <br/>
@@ -66,9 +43,29 @@ ViewData["Title"] = "Record creating";
 <br/>
 <div style="border:1px solid red;"></div>
 
-<h1>Request URL:</h1>@Model.list_url
+<h1>Request URL:</h1>@createheader_url
 <br/>
-<h1>Request Method:</h1>@Model.list_method
+<h1>Request Method:</h1>@createheader_method
+<br/>
+<h1>Request Body:</h1> None
+<br/>
+<h1>Response:</h1>See console for output of application
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@createdetail_url
+<br/>
+<h1>Request Method:</h1>@createdetail_method
+<br/>
+<h1>Request Body:</h1> None
+<br/>
+<h1>Response:</h1>See console for output of application
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@list_url
+<br/>
+<h1>Request Method:</h1>@list_method
 <br/>
 <h1>Request Body:</h1> None
 <br/>
