@@ -1,0 +1,47 @@
+@page "/Login"
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+
+@{
+ViewData["Title"] = "Login Example";
+}
+<h1>Request URL:</h1>@Model.login_url
+<br/>
+<h1>Request Method:</h1>@Model.login_method
+<br/>
+<h1>Request Body:</h1>@Model.login_request
+<br/>
+<h1>Response:</h1>See console for output of application
+<br/>
+@code{
+    /*
+    Request URL for Login action
+    */
+    public string login_url = "/index.php?page=api&module=auth&action=login";
+    public string login_method = "POST";
+    public string login_request = "";
+    
+
+    protected override async Task OnAfterRenderAsync(bool firstRender){
+        dynamic body = new JObject();
+        /*Credentials for Login request*/
+        body.CompanyID = "DINOS";
+        body.DivisionID = "DEFAULT";
+        body.DepartmentID = "DEFAULT";
+        body.EmployeeID = "Demo";
+        body.EmployeePassword = "Demo";
+        body.language = "english";
+
+        /*
+        doing request. Request Body is JSON, Response body is JSON
+        Response is json like:
+        {
+            "session_id": "aud8s4l449frcnponmv1ithvoo",
+            "companies": [],
+            "message": "ok"
+        }
+        Where session_id is uuid, which used for any other API request
+        */
+        API.doRequest(this.login_method, this.login_url, this.login_request = body.ToString()).ContinueWith(t => t.Result);
+    }
+}

@@ -1,0 +1,74 @@
+@page "/List"
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+
+@{
+ViewData["Title"] = "The List of records";
+}
+<h1>Request URL:</h1>@Model.login_url
+<br/>
+<h1>Request Method:</h1>@Model.login_method
+<br/>
+<h1>Request Body:</h1>@Model.login_request
+<br/>
+<h1>Response:</h1>See console for output of application
+<br/>
+<br/>
+
+<h1>Request URL:</h1>@Model.list_url
+<br/>
+<h1>Request Method:</h1>@Model.list_method
+<br/>
+<h1>Request Body:</h1> None
+<br/>
+<h1>Response:</h1>See console for output of application
+<br/>
+
+@code {
+    /*
+    Request URL for Login action
+    */
+    public string login_url = "/index.php?page=api&module=auth&action=login";
+    public string login_method = "POST";
+    public string login_request = "";
+
+    /* 
+    Request URL for List action
+    For this example we using AccountsReceivable/OrderProcessing/ViewOrders Enterprise screen, but you can use any screen from list in file EnterpriseScreens.json
+    */
+    public string list_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrders&action=list&session_id=";
+    public string list_method = "GET";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender){
+        APIRequests();
+    }
+
+    public async void APIRequests(){
+        dynamic body = new JObject();
+        /*Credentials for Login request*/
+        body.CompanyID = "DINOS";
+        body.DivisionID = "DEFAULT";
+        body.DepartmentID = "DEFAULT";
+        body.EmployeeID = "Demo";
+        body.EmployeePassword = "Demo";
+        body.language = "english";
+
+        /*
+        Login request. Request Body is JSON, Response body is JSON
+        Response is json like:
+        {
+            "session_id": "aud8s4l449frcnponmv1ithvoo",
+            "companies": [],
+            "message": "ok"
+        }
+        Where session_id is uuid, which used for any other API request
+        */
+        dynamic sessionResult = JObject.Parse(await(API.doRequest(this.login_method, this.login_url, this.login_request = body.ToString())));
+        Console.WriteLine(sessionResult);
+        /*
+        Forms List Request.
+        Getting list of all Opened Orders
+        */
+        Console.WriteLine(await(API.doRequest(list_method, list_url + sessionResult.session_id, null)));
+    }
+}
