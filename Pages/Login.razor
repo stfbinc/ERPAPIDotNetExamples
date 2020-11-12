@@ -6,10 +6,14 @@
 <br/>
 <h1>Request Method:</h1>@login_method
 <br/>
-<h1>Request Body:</h1>@login_request
+<h1>Request Body:</h1><pre>@login_request</pre>
 <br/>
-<h1>Response:</h1>See console for output of application
+<h1>Response:</h1>
 <br/>
+<pre>
+@response
+</pre>
+
 @code{
     /*
     Request URL for Login action
@@ -17,7 +21,7 @@
     public string login_url = "/index.php?page=api&module=auth&action=login";
     public string login_method = "POST";
     public string login_request = "";
-    
+    public string response = "";
 
     protected override async Task OnAfterRenderAsync(bool firstRender){
         dynamic body = new JObject();
@@ -39,6 +43,9 @@
         }
         Where session_id is uuid, which used for any other API request
         */
-        API.doRequest(this.login_method, this.login_url, this.login_request = body.ToString()).ContinueWith(t => t.Result);
+        if(firstRender){
+            response = await API.doRequest(this.login_method, this.login_url, this.login_request = body.ToString());
+    StateHasChanged();
+        }
     }
 }

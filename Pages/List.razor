@@ -6,11 +6,13 @@
 <br/>
 <h1>Request Method:</h1>@login_method
 <br/>
-<h1>Request Body:</h1>@login_request
+<h1>Request Body:</h1><pre>@login_request</pre>
 <br/>
-<h1>Response:</h1>See console for output of application
+<h1>Response:</h1>
 <br/>
-<br/>
+<pre>
+    @login_response
+</pre>
 
 <h1>Request URL:</h1>@list_url
 <br/>
@@ -18,7 +20,7 @@
 <br/>
 <h1>Request Body:</h1> None
 <br/>
-<h1>Response:</h1>See console for output of application
+<h1>Response:</h1><pre>@list_response</pre>
 <br/>
 
 @code {
@@ -28,6 +30,7 @@
     public string login_url = "/index.php?page=api&module=auth&action=login";
     public string login_method = "POST";
     public string login_request = "";
+    public string login_response = "";
 
     /* 
     Request URL for List action
@@ -35,8 +38,10 @@
     */
     public string list_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrders&action=list&session_id=";
     public string list_method = "GET";
+    public string list_response = "";
 
     protected override async Task OnAfterRenderAsync(bool firstRender){
+        if(firstRender)
         APIRequests();
     }
 
@@ -60,12 +65,15 @@
         }
         Where session_id is uuid, which used for any other API request
         */
-        dynamic sessionResult = JObject.Parse(await(API.doRequest(this.login_method, this.login_url, this.login_request = body.ToString())));
-        Console.WriteLine(sessionResult);
+        login_response = await API.doRequest(this.login_method, this.login_url, this.login_request = body.ToString());
+        dynamic sessionResult = JObject.Parse(login_response);
+        //Console.WriteLine(sessionResult);
         /*
         Forms List Request.
         Getting list of all Opened Orders
         */
-        Console.WriteLine(await(API.doRequest(list_method, list_url + sessionResult.session_id, null)));
+        list_response = await API.doRequest(list_method, list_url + sessionResult.session_id, null);
+        StateHasChanged();
+        //Console.WriteLine(list_response);
     }
 }
