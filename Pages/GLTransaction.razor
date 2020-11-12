@@ -1,0 +1,243 @@
+@page "/GLTransaction"
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+
+<h1>Request URL:</h1>@login_url
+<br/>
+<h1>Request Method:</h1>@login_method
+<br/>
+<h1>Request Body:</h1><pre>@login_request</pre>
+<br/>
+<h1>Response:</h1><pre>@login_response</pre>
+<br/>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@dictionaries_url
+<br/>
+<h1>Request Method:</h1>@dictionaries_method
+<br/>
+<h1>Request Body:</h1> None
+<br/>
+<h1>Response:</h1><pre>@dictionaries_response</pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@emptyheader_url
+<br/>
+<h1>Request Method:</h1>@emptyheader_method
+<br/>
+<h1>Request Body:</h1> None
+<br/>
+<h1>Response:</h1><pre>@emptyheader_response</pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@emptydetail_url
+<br/>
+<h1>Request Method:</h1>@emptydetail_method
+<br/>
+<h1>Request Body:</h1> None
+<br/>
+<h1>Response:</h1><pre>@emptyheader_response</pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@createheader_url
+<br/>
+<h1>Request Method:</h1>@createheader_method
+<br/>
+<h1>Request Body:</h1><pre>@createheader_request</pre>
+<br/>
+<h1>Response:</h1><pre>@createheader_response</pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@createdetail_url
+<br/>
+<h1>Request Method:</h1>@createdetail_method
+<br/>
+<h1>Request Body:</h1><pre>@createdetail_request</pre>
+<br/>
+<h1>Response:</h1><pre>@createdetail_response</pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@list_url
+<br/>
+<h1>Request Method:</h1>@list_method
+<br/>
+<h1>Request Body:</h1> None
+<br/>
+<h1>Response:</h1><pre>@list_response</pre>
+
+    @code{
+        /*
+        Request URL for Login action
+        */
+        public string login_url = "/index.php?page=api&module=auth&action=login";
+        public string login_method = "POST";
+        public string login_request = "";
+        public string login_response = "";
+
+        /*
+        Request URL for Dictionaries action
+        Getting Customers, Items, Warehouses, Employees and Terms dictionaries
+        */
+        public string dictionaries_url = "/index.php?page=api&module=dictionaries&list=LedgerTransactionTypes,CurrencyTypes,Accounts,Projects&session_id=";
+        public string dictionaries_method = "GET";
+        public string dictionaries_response = "";
+
+        /*
+        Request URL for getEmpty header action
+        */
+        public string emptyheader_url = "/index.php?page=api&module=forms&path=GeneralLedger/Ledger/ViewGLTransactions&action=emptyRecord&session_id=";
+        public string emptyheader_method = "GET";
+        public string emptyheader_response = "";
+        
+        /*
+        Request URL for getEmpty detail action
+        */
+        public string emptydetail_url = "/index.php?page=api&module=forms&path=GeneralLedger/Ledger/LedgerTransactionsDetail&action=emptyRecord&session_id=";
+        public string emptydetail_method = "GET";
+        public string emptydetail_response = "";        
+
+        /*
+        Request URL for Create header action
+        */
+        public string createheader_url = "/index.php?page=api&module=forms&path=GeneralLedger/Ledger/ViewGLTransactions&action=create&session_id=";
+        public string createheader_method = "POST";
+        public string createheader_request = "";
+        public string createheader_response = "";
+
+        /*
+        Request URL for Create detail action
+        */
+        public string createdetail_url = "/index.php?page=api&module=forms&path=GeneralLedger/Ledger/LedgerTransactionsDetail&action=createMany&session_id=";
+        public string createdetail_method = "POST";
+        public string createdetail_request = "";
+        public string createdetail_response = "";
+
+        /* 
+        Request URL for List action
+        For this example we using GeneralLedger/Ledger/ViewGLTransactions Enterprise screen, but you can use any screen from list in file EnterpriseScreens.json
+        */
+        public string list_url = "/index.php?page=api&module=forms&path=GeneralLedger/Ledger/ViewGLTransactions&action=list&session_id=";
+        public string list_method = "GET";
+        public string list_response = "";
+
+        protected override async Task OnAfterRenderAsync(bool firstRender){
+            if(firstRender)
+            APIRequests();
+        }
+
+        public async void APIRequests(){
+            dynamic body = new JObject();
+            /*Credentials for Login request*/
+            body.CompanyID = "DINOS";
+            body.DivisionID = "DEFAULT";
+            body.DepartmentID = "DEFAULT";
+            body.EmployeeID = "Demo";
+            body.EmployeePassword = "Demo";
+            body.language = "english";
+
+            /*
+            Login request. Request Body is JSON, Response body is JSON
+            Response is json like:
+            {
+                "session_id": "aud8s4l449frcnponmv1ithvoo",
+                "companies": [],
+                "message": "ok"
+            }
+            Where session_id is uuid, which used for any other API request
+            */
+            login_response = await API.doRequest(this.login_method, this.login_url, this.login_request = body.ToString());
+            dynamic sessionResult = JObject.Parse(login_response);
+            
+            /*
+            Dictionaries Request.
+            Getting dictionaries
+            */
+            dictionaries_response = await API.doRequest(dictionaries_method, dictionaries_url + sessionResult.session_id, null);
+            dynamic dictionaries = JObject.Parse(dictionaries_response);
+            string GLTransactionTypeID = "", CurrencyID = "", GLTransactionAccountDebit = "", GLTransactionAccountCredit = "", ProjectID = "";
+            JToken  Item = new JObject(); 
+
+            foreach (var value in dictionaries.LedgerTransactionTypes)
+            {
+                GLTransactionTypeID = value.Value.value.Value.ToString();
+                break;
+            }
+
+            foreach (var value in dictionaries.CurrencyTypes)
+            {
+                CurrencyID = value.Value.value.Value.ToString();
+                break;
+            }
+
+            int two = 2;
+            foreach (var value in dictionaries.Accounts)
+            {
+                if(two == 2){
+                    GLTransactionAccountDebit = value.Value.value.Value.ToString();
+                    two--;
+                }else{
+                    GLTransactionAccountCredit = value.Value.value.Value.ToString();
+                    break;
+                }
+            }
+
+            foreach (var value in dictionaries.Projects)
+            {
+                ProjectID = value.Value.value.Value.ToString();
+                break; 
+            }
+
+            /*
+            Forms getEmpty header Request.
+            Getting empty record for inserting to Ledger Transactions
+            */
+            emptyheader_response = await API.doRequest(emptyheader_method, emptyheader_url + sessionResult.session_id, null);
+            dynamic header = JObject.Parse(emptyheader_response);
+            //filling Header record with data from Dictionaries
+            header.GLTransactionTypeID = GLTransactionTypeID;
+            header.CurrencyID = CurrencyID;
+
+            /*
+            Forms getEmpty detail Request.
+            Getting empty record for inserting to Ledger Transactions Detail
+            */
+            emptydetail_response = await API.doRequest(emptydetail_method, emptydetail_url + sessionResult.session_id, null);
+            dynamic detail1 = JObject.Parse(emptydetail_response);
+            dynamic detail2 = JObject.Parse(emptydetail_response);
+            //creating Header record and getting created record with binded OrderNumber and other system generated fields
+            createheader_response = await API.doRequest(createheader_method, createheader_url + sessionResult.session_id, createheader_request = header.ToString());
+            header = JObject.Parse(createheader_response);
+            
+            //filling Detail record with data from Dictionaries
+            detail1.GLTransactionNumber = header.GLTransactionNumber;
+            detail1.GLTransactionAccount = GLTransactionAccountDebit;
+            detail1.GLCreditAmount = 200;
+            detail1.ProjectID = ProjectID;
+
+            //filling Detail record with data from Dictionaries
+            detail2.GLTransactionNumber = header.GLTransactionNumber;
+            detail2.GLTransactionAccount = GLTransactionAccountDebit;
+            detail2.GLDebitAmount = 200;
+            detail2.ProjectID = ProjectID;
+
+
+            //creating Detail record
+            dynamic details = new JArray();
+            //adding two same detail records, but you can to add any numbers of different details
+            details.Add(detail1);
+            details.Add(detail2);
+            createdetail_response = await API.doRequest(createdetail_method, createdetail_url + sessionResult.session_id, createdetail_request = details.ToString());
+            /*
+            Forms List Request.
+            Getting list of all Ledger Transactions
+            */
+            list_response = await API.doRequest(list_method, list_url + sessionResult.session_id, null);
+            StateHasChanged();
+        }
+    }
