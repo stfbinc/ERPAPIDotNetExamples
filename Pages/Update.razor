@@ -104,7 +104,6 @@
         */
         login_response = await API.doRequest(this.login_method, this.login_url, this.login_request = body.ToString());
         dynamic sessionResult = JObject.Parse(login_response);
-        Console.WriteLine(sessionResult);
         
         /*
         Forms Get Request

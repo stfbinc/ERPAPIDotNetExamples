@@ -1,0 +1,160 @@
+@page "/CreateCompany"
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+
+<h1>Request URL:</h1>@login_url
+<br/>
+<h1>Request Method:</h1>@login_method
+<br/>
+<h1>Request Body:</h1><pre>@login_request</pre>
+<br/>
+<h1>Response:</h1>
+<br/>
+<pre>
+    @login_response
+</pre>
+
+<h1>Request URL:</h1>@createcompany_url
+<br/>
+<h1>Request Method:</h1>@createcompany_method
+<br/>
+<h1>Request Body:</h1>none
+<br/>
+<h1>Response:</h1><pre>@createcompany_response</pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@get_url
+<br/>
+<h1>Request Method:</h1>@get_method
+<br/>
+<h1>Request Body:</h1>none
+<br/>
+<h1>Response:</h1><pre>@get_response</pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@update_url
+<br/>
+<h1>Request Method:</h1>@update_method
+<br/>
+<h1>Request Body:</h1><pre>@update_request</pre>
+<br/>
+<h1>Response:</h1><pre>@update_response</pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@getcompany_url
+<br/>
+<h1>Request Method:</h1>@getcompany_method
+<br/>
+<h1>Request Body:</h1>none
+<br/>
+<h1>Response:</h1><pre>@getcompany_response</pre>
+<br/>
+
+@code{
+    /*
+    Request URL for Login action
+    */
+    public string login_url = "/index.php?page=api&module=auth&action=login";
+    public string login_method = "POST";
+    public string login_request = "";
+    public string login_response = "";
+
+    /* 
+    Request URL for Create action
+    id contains '__' separated list from Company, Division, Department
+    We calling it keyString. Each record had own keyString
+    */
+    public string createcompany_url = "/index.php?page=api&module=forms&path=SystemSetup/CompanySetup/CompanySetup&action=procedure&procedure=CreateCompany&session_id=";
+    public string createcompany_method = "POST";
+    public string createcompany_request = "";
+    public string createcompany_response = "";
+    
+    /* 
+    Request URL for Get action
+    id contains '__' separated list from Company, Division, Department
+    We calling it keyString. Each record had own keyString
+    */
+    public string get_url = "/index.php?page=api&module=forms&path=SystemSetup/CompanySetup/CompanySetup&action=get&id=NewTest__DEFAULT__DEFAULT&session_id=";
+    public string get_method = "GET";
+    public string get_response = "";
+
+    /* 
+    Request URL for Update action
+    */
+    public string update_url = "/index.php?page=api&module=forms&path=SystemSetup/CompanySetup/CompanySetup&action=update&id=NewTest__DEFAULT__DEFAULT&session_id=";
+    public string update_method = "POST";
+    public string update_request = "";
+    public string update_response = "";
+
+    /* 
+    Request URL for Get action
+    id contains '__' separated list from Company, Division, Department
+    We calling it keyString. Each record had own keyString
+    */
+    public string getcompany_url = "/index.php?page=api&module=forms&path=SystemSetup/CompanySetup/CompanySetup&action=get&id=NewTest__DEFAULT__DEFAULT&session_id=";
+    public string getcompany_method = "GET";
+    public string getcompany_response = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender){
+        if(firstRender)
+            APIRequests();
+    }
+
+    public async void APIRequests(){
+        dynamic body = new JObject();
+        /*Credentials for Login request*/
+        body.CompanyID = "DINOS";
+        body.DivisionID = "DEFAULT";
+        body.DepartmentID = "DEFAULT";
+        body.EmployeeID = "Demo";
+        body.EmployeePassword = "Demo";
+        body.language = "english";
+
+        /*
+        Login request. Request Body is JSON, Response body is JSON
+        Response is json like:
+        {
+            "session_id": "aud8s4l449frcnponmv1ithvoo",
+            "companies": [],
+            "message": "ok"
+        }
+        Where session_id is uuid, which used for any other API request
+        */
+        login_response = await API.doRequest(this.login_method, this.login_url, this.login_request = body.ToString());
+        dynamic sessionResult = JObject.Parse(login_response);
+        
+        /*
+        Forms Get Request
+        Getting Company record for updating
+        */
+        dynamic createcompany = new JObject();
+        /*Credentials for Login request*/
+        createcompany.CompanyID = "NewTest";
+        createcompany_response = await API.doRequest(createcompany_method, createcompany_url + sessionResult.session_id, createcompany_request = createcompany.ToString());
+        
+        /*
+        Forms Get Request
+        Getting Company record for updating
+        */
+        get_response = await API.doRequest(get_method, get_url + sessionResult.session_id, null);
+        dynamic company = JObject.Parse(get_response);
+        company.CompanyCity = "Dallas";
+
+        /*
+        Forms Update Request
+        Updating order record 
+        */
+        update_response = await API.doRequest(this.update_method, update_url + sessionResult.session_id, update_request = company.ToString());
+
+        /*
+        Forms Get Request
+        Getting order record for updating
+        */
+        getcompany_response = await API.doRequest(getcompany_method, getcompany_url + sessionResult.session_id, null);
+
+        StateHasChanged();
+    }
+}
