@@ -6,19 +6,21 @@
 <br/>
 <h1>Request Method:</h1>@login_method
 <br/>
-<h1>Request Body:</h1>@login_request
+<h1>Request Body:</h1><pre>@login_request</pre>
 <br/>
-<h1>Response:</h1>See console for output of application
+<h1>Response:</h1>
 <br/>
-<div style="border:1px solid red;"></div>
+<pre>
+    @login_response
+</pre>
 
 <h1>Request URL:</h1>@get_url
 <br/>
 <h1>Request Method:</h1>@get_method
 <br/>
-<h1>Request Body:</h1> None
+<h1>Request Body:</h1>none
 <br/>
-<h1>Response:</h1>See console for output of application
+<h1>Response:</h1><pre>@get_response</pre>
 <br/>
 <div style="border:1px solid red;"></div>
 
@@ -26,9 +28,9 @@
 <br/>
 <h1>Request Method:</h1>@update_method
 <br/>
-<h1>Request Body:</h1> See code in Pages/update.cshtml.cs
+<h1>Request Body:</h1><pre>@update_request</pre>
 <br/>
-<h1>Response:</h1>See console for output of application
+<h1>Response:</h1><pre>@update_response</pre>
 <br/>
 <div style="border:1px solid red;"></div>
 
@@ -36,10 +38,9 @@
 <br/>
 <h1>Request Method:</h1>@list_method
 <br/>
-<h1>Request Body:</h1> None
+<h1>Request Body:</h1>none
 <br/>
-<h1>Response:</h1>See console for output of application
-<br/>
+<h1>Response:</h1><pre>@list_response</pre>
 <br/>
 
 @code{
@@ -49,6 +50,7 @@
     public string login_url = "/index.php?page=api&module=auth&action=login";
     public string login_method = "POST";
     public string login_request = "";
+    public string login_response = "";
 
     /* 
     Request URL for List action
@@ -56,22 +58,27 @@
     */
     public string list_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrders&action=list&session_id=";
     public string list_method = "GET";
+    public string list_response = "";
 
     /* 
     Request URL for Get action
     id contains '__' separated list from Company, Division, Department and OrderNumber
     We calling it keyString. Each record had own keyString
     */
-    public string get_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrders&action=get&id=DINOS__DEFAULT__DEFAULT__2372&session_id=";
+    public string get_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrders&action=get&id=DINOS__DEFAULT__DEFAULT__2190&session_id=";
     public string get_method = "GET";
+    public string get_response = "";
 
     /* 
     Request URL for Update action
     */
-    public string update_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrders&action=update&id=DINOS__DEFAULT__DEFAULT__2372&session_id=";
+    public string update_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrders&action=update&id=DINOS__DEFAULT__DEFAULT__2190&session_id=";
     public string update_method = "POST";
+    public string update_request = "";
+    public string update_response = "";
 
     protected override async Task OnAfterRenderAsync(bool firstRender){
+        if(firstRender)
         APIRequests();
     }
 
@@ -95,14 +102,16 @@
         }
         Where session_id is uuid, which used for any other API request
         */
-        dynamic sessionResult = JObject.Parse(await(API.doRequest(this.login_method, this.login_url, this.login_request = body.ToString())));
+        login_response = await API.doRequest(this.login_method, this.login_url, this.login_request = body.ToString());
+        dynamic sessionResult = JObject.Parse(login_response);
         Console.WriteLine(sessionResult);
         
         /*
         Forms Get Request
         Getting order record for updating
         */
-        dynamic order = JObject.Parse(await(API.doRequest(get_method, get_url + sessionResult.session_id, null)));
+        get_response = await API.doRequest(get_method, get_url + sessionResult.session_id, null);
+        dynamic order = JObject.Parse(get_response);
         order.CustomerID = "dland";
         order.CustomerPhone = "79998888888";
 
@@ -110,17 +119,13 @@
         Forms Update Request
         Updating order record 
         */
-        await(API.doRequest(this.update_method, update_url + sessionResult.session_id, order.ToString()));
-        /*                         url: `../index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrders&action=update&id=DINOS__DEFAULT__DEFAULT__2110&session_id=${session.session_id}`,
-        type: 'POST',
-        data : JSON.stringify(data),
-        contentType : 'application/json'
-    });
-    */
-    /*
-    Forms List Request.
-    Getting list of all Opened Orders
-    */
-    Console.WriteLine(await(API.doRequest(list_method, list_url + sessionResult.session_id, null)));
-}
+        update_response = await API.doRequest(this.update_method, update_url + sessionResult.session_id, update_request = order.ToString());
+        
+        /*
+        Forms List Request.
+        Getting list of all Opened Orders
+        */
+        list_response = await API.doRequest(list_method, list_url + sessionResult.session_id, null);
+        StateHasChanged();
+    }
 }

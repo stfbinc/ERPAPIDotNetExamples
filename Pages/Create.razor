@@ -6,9 +6,9 @@
 <br/>
 <h1>Request Method:</h1>@login_method
 <br/>
-<h1>Request Body:</h1>@login_request
+<h1>Request Body:</h1><pre>@login_request</pre>
 <br/>
-<h1>Response:</h1>See console for output of application
+<h1>Response:</h1><pre>@login_response</pre>
 <br/>
 <br/>
 <div style="border:1px solid red;"></div>
@@ -19,7 +19,7 @@
 <br/>
 <h1>Request Body:</h1> None
 <br/>
-<h1>Response:</h1>See console for output of application
+<h1>Response:</h1><pre>@dictionaries_response</pre>
 <br/>
 <div style="border:1px solid red;"></div>
 
@@ -29,7 +29,7 @@
 <br/>
 <h1>Request Body:</h1> None
 <br/>
-<h1>Response:</h1>See console for output of application
+<h1>Response:</h1><pre>@emptyheader_response</pre>
 <br/>
 <div style="border:1px solid red;"></div>
 
@@ -39,7 +39,7 @@
 <br/>
 <h1>Request Body:</h1> None
 <br/>
-<h1>Response:</h1>See console for output of application
+<h1>Response:</h1><pre>@emptyheader_response</pre>
 <br/>
 <div style="border:1px solid red;"></div>
 
@@ -47,9 +47,9 @@
 <br/>
 <h1>Request Method:</h1>@createheader_method
 <br/>
-<h1>Request Body:</h1> None
+<h1>Request Body:</h1><pre>@createheader_request</pre>
 <br/>
-<h1>Response:</h1>See console for output of application
+<h1>Response:</h1><pre>@createheader_response</pre>
 <br/>
 <div style="border:1px solid red;"></div>
 
@@ -57,9 +57,9 @@
 <br/>
 <h1>Request Method:</h1>@createdetail_method
 <br/>
-<h1>Request Body:</h1> None
+<h1>Request Body:</h1><pre>@createdetail_request</pre>
 <br/>
-<h1>Response:</h1>See console for output of application
+<h1>Response:</h1><pre>@createdetail_response</pre>
 <br/>
 <div style="border:1px solid red;"></div>
 
@@ -69,10 +69,7 @@
 <br/>
 <h1>Request Body:</h1> None
 <br/>
-<h1>Response:</h1>See console for output of application
-<br/>
-<div style="border:1px solid red;"></div>
-
+<h1>Response:</h1><pre>@list_response</pre>
 @code{
     /*
     Request URL for Login action
@@ -80,6 +77,7 @@
     public string login_url = "/index.php?page=api&module=auth&action=login";
     public string login_method = "POST";
     public string login_request = "";
+    public string login_response = "";
 
     /*
     Request URL for Dictionaries action
@@ -87,30 +85,37 @@
     */
     public string dictionaries_url = "/index.php?page=api&module=dictionaries&list=Customers,Items,Warehouses,Employees,Terms&session_id=";
     public string dictionaries_method = "GET";
+    public string dictionaries_response = "";
 
     /*
     Request URL for getEmpty header action
     */
     public string emptyheader_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrders&action=emptyRecord&session_id=";
     public string emptyheader_method = "GET";
+    public string emptyheader_response = "";
     
     /*
     Request URL for getEmpty detail action
     */
     public string emptydetail_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrdersDetail&action=emptyRecord&session_id=";
     public string emptydetail_method = "GET";
+    public string emptydetail_response = "";        
 
     /*
     Request URL for Create header action
     */
     public string createheader_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrders&action=create&session_id=";
     public string createheader_method = "POST";
+    public string createheader_request = "";
+    public string createheader_response = "";
 
     /*
     Request URL for Create detail action
     */
     public string createdetail_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrdersDetail&action=createMany&session_id=";
     public string createdetail_method = "POST";
+    public string createdetail_request = "";
+    public string createdetail_response = "";
 
     /* 
     Request URL for List action
@@ -118,8 +123,10 @@
     */
     public string list_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrders&action=list&session_id=";
     public string list_method = "GET";
+    public string list_response = "";
 
     protected override async Task OnAfterRenderAsync(bool firstRender){
+        if(firstRender)
         APIRequests();
     }
 
@@ -143,18 +150,18 @@
         }
         Where session_id is uuid, which used for any other API request
         */
-        dynamic sessionResult = JObject.Parse(await(API.doRequest(this.login_method, this.login_url, this.login_request = body.ToString())));
-        Console.WriteLine(sessionResult);
-
+        login_response = await API.doRequest(this.login_method, this.login_url, this.login_request = body.ToString());
+        dynamic sessionResult = JObject.Parse(login_response);
         
         /*
         Dictionaries Request.
         Getting dictionaries
         */
-        dynamic dictionaries = JObject.Parse(await(API.doRequest(dictionaries_method, dictionaries_url + sessionResult.session_id, null)));
+        dictionaries_response = await API.doRequest(dictionaries_method, dictionaries_url + sessionResult.session_id, null);
+        dynamic dictionaries = JObject.Parse(dictionaries_response);
         string CustomerID = "", EmployeeID = "", TermsID = "", WarehouseID = "";
         JToken  Item = new JObject(); 
-        Console.WriteLine(dictionaries);
+
         foreach (var Customer in dictionaries.Customers.values)
         {
             CustomerID = Customer.CustomerID.Value.ToString();
@@ -190,7 +197,8 @@
         Forms getEmpty header Request.
         Getting empty record for inserting to Order Header
         */
-        dynamic header = JObject.Parse(await(API.doRequest(emptyheader_method, emptyheader_url + sessionResult.session_id, null)));
+        emptyheader_response = await API.doRequest(emptyheader_method, emptyheader_url + sessionResult.session_id, null);
+        dynamic header = JObject.Parse(emptyheader_response);
         //filling Header record with data from Dictionaries
         header.CustomerID = CustomerID;
         header.EmployeeID = EmployeeID;
@@ -202,9 +210,11 @@
         Forms getEmpty detail Request.
         Getting empty record for inserting to Order Header
         */
-        dynamic detail = JObject.Parse(await(API.doRequest(emptydetail_method, emptydetail_url + sessionResult.session_id, null)));
+        emptydetail_response = await API.doRequest(emptydetail_method, emptydetail_url + sessionResult.session_id, null);
+        dynamic detail = JObject.Parse(emptydetail_response);
         //creating Header record and getting created record with binded OrderNumber and other system generated fields
-        header = JObject.Parse(await(API.doRequest(createheader_method, createheader_url + sessionResult.session_id, header.ToString())));
+        createheader_response = await API.doRequest(createheader_method, createheader_url + sessionResult.session_id, createheader_request = header.ToString());
+        header = JObject.Parse(createheader_response);
         
         //filling Detail record with data from Dictionaries
         detail.OrderNumber = header.OrderNumber;
@@ -219,11 +229,12 @@
         //adding two same detail records, but you can to add any numbers of different details
         details.Add(detail);
         details.Add(detail);
-        await(API.doRequest(createdetail_method, createdetail_url + sessionResult.session_id, details.ToString()));
+        createdetail_response = await API.doRequest(createdetail_method, createdetail_url + sessionResult.session_id, createdetail_request = details.ToString());
         /*
         Forms List Request.
         Getting list of all Opened Orders
         */
-        Console.WriteLine(await(API.doRequest(list_method, list_url + sessionResult.session_id, null)));
+        list_response = await API.doRequest(list_method, list_url + sessionResult.session_id, null);
+        StateHasChanged();
     }
 }
