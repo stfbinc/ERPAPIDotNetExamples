@@ -1,0 +1,308 @@
+@page "/ComplexOrderExample"
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+
+<h1>Request URL:</h1>@login_url
+<br/>
+<h1>Request Method:</h1>@login_method
+<br/>
+<h1>Request Body:</h1><pre>@login_request</pre>
+<br/>
+<h1>Response:</h1><pre>@login_response</pre>
+<br/>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@dictionaries_url
+<br/>
+<h1>Request Method:</h1>@dictionaries_method
+<br/>
+<h1>Request Body:</h1> None
+<br/>
+<h1>Response:</h1><pre>@dictionaries_response</pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@emptyheader_url
+<br/>
+<h1>Request Method:</h1>@emptyheader_method
+<br/>
+<h1>Request Body:</h1> None
+<br/>
+<h1>Response:</h1><pre>@emptyheader_response</pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@emptydetail_url
+<br/>
+<h1>Request Method:</h1>@emptydetail_method
+<br/>
+<h1>Request Body:</h1> None
+<br/>
+<h1>Response:</h1><pre>@emptyheader_response</pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@createheader_url
+<br/>
+<h1>Request Method:</h1>@createheader_method
+<br/>
+<h1>Request Body:</h1><pre>@createheader_request</pre>
+<br/>
+<h1>Response:</h1><pre>@createheader_response</pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@createdetail_url
+<br/>
+<h1>Request Method:</h1>@createdetail_method
+<br/>
+<h1>Request Body:</h1><pre>@createdetail_request</pre>
+<br/>
+<h1>Response:</h1><pre>@createdetail_response</pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@post_url
+<br/>
+<h1>Request Method:</h1>@post_method
+<br/>
+<h1>Request Body:</h1><pre>@post_request</pre>
+<br/>
+<h1>Response:</h1><pre>@post_response</pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@pick_url
+<br/>
+<h1>Request Method:</h1>@pick_method
+<br/>
+<h1>Request Body:</h1><pre>@pick_request</pre>
+<br/>
+<h1>Response:</h1><pre>@pick_response</pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@ship_url
+<br/>
+<h1>Request Method:</h1>@ship_method
+<br/>
+<h1>Request Body:</h1><pre>@ship_request</pre>
+<br/>
+<h1>Response:</h1><pre>@ship_response</pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@invoice_url
+<br/>
+<h1>Request Method:</h1>@invoice_method
+<br/>
+<h1>Request Body:</h1><pre>@invoice_request</pre>
+<br/>
+<h1>Response:</h1><pre>@invoice_response</pre>
+<br/>
+<div style="border:1px solid red;"></div>
+@code{
+    /*
+    Request URL for Login action
+    */
+    public string login_url = "/index.php?page=api&module=auth&action=login";
+    public string login_method = "POST";
+    public string login_request = "";
+    public string login_response = "";
+
+    /*
+    Request URL for Dictionaries action
+    Getting Customers, Items, Warehouses, Employees and Terms dictionaries
+    */
+    public string dictionaries_url = "/index.php?page=api&module=dictionaries&list=Customers,Items,Warehouses,Employees,Terms&session_id=";
+    public string dictionaries_method = "GET";
+    public string dictionaries_response = "";
+
+    /*
+    Request URL for getEmpty header action
+    */
+    public string emptyheader_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrders&action=emptyRecord&session_id=";
+    public string emptyheader_method = "GET";
+    public string emptyheader_response = "";
+    
+    /*
+    Request URL for getEmpty detail action
+    */
+    public string emptydetail_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrdersDetail&action=emptyRecord&session_id=";
+    public string emptydetail_method = "GET";
+    public string emptydetail_response = "";        
+
+    /*
+    Request URL for Create header action
+    */
+    public string createheader_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrders&action=create&session_id=";
+    public string createheader_method = "POST";
+    public string createheader_request = "";
+    public string createheader_response = "";
+
+    /*
+    Request URL for Create detail action
+    */
+    public string createdetail_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrdersDetail&action=createMany&session_id=";
+    public string createdetail_method = "POST";
+    public string createdetail_request = "";
+    public string createdetail_response = "";
+
+    /*
+    Request URL for Post Order action
+    */
+    public string post_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderProcessing/ViewOrders&action=procedure&procedure=Post&session_id=";
+    public string post_method = "POST";
+    public string post_request = "";
+    public string post_response = "";
+
+    /*
+    Request URL for Pick&Pack Order action
+    */
+    public string pick_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderScreens/PickPackOrders&action=procedure&procedure=Picked&session_id=";
+    public string pick_method = "POST";
+    public string pick_request = "";
+    public string pick_response = "";
+
+    /*
+    Request URL for Ship Order action
+    */
+    public string ship_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderScreens/ShipOrders&action=procedure&procedure=Shipped&session_id=";
+    public string ship_method = "POST";
+    public string ship_request = "";
+    public string ship_response = "";
+
+    /*
+    Request URL for Invoice Order action
+    */
+    public string invoice_url = "/index.php?page=api&module=forms&path=AccountsReceivable/OrderScreens/InvoiceShippedOrders&action=procedure&procedure=Invoice_CreateFromOrder&session_id=";
+    public string invoice_method = "POST";
+    public string invoice_request = "";
+    public string invoice_response = "";
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender){
+        if(firstRender)
+        APIRequests();
+    }
+
+    public async void APIRequests(){
+        dynamic body = new JObject();
+        /*Credentials for Login request*/
+        body.CompanyID = "DINOS";
+        body.DivisionID = "DEFAULT";
+        body.DepartmentID = "DEFAULT";
+        body.EmployeeID = "Demo";
+        body.EmployeePassword = "Demo";
+        body.language = "english";
+
+        /*
+        Login request. Request Body is JSON, Response body is JSON
+        Response is json like:
+        {
+            "session_id": "aud8s4l449frcnponmv1ithvoo",
+            "companies": [],
+            "message": "ok"
+        }
+        Where session_id is uuid, which used for any other API request
+        */
+        login_response = await API.doRequest(this.login_method, this.login_url, this.login_request = body.ToString());
+        dynamic sessionResult = JObject.Parse(login_response);
+        
+        /*
+        Dictionaries Request.
+        Getting dictionaries
+        */
+        dictionaries_response = await API.doRequest(dictionaries_method, dictionaries_url + sessionResult.session_id, null);
+        dynamic dictionaries = JObject.Parse(dictionaries_response);
+        string CustomerID = "", EmployeeID = "", TermsID = "", WarehouseID = "";
+        JToken  Item = new JObject(); 
+
+        foreach (var Customer in dictionaries.Customers.values)
+        {
+            CustomerID = Customer.CustomerID.Value.ToString();
+            break;
+        }
+        //Console.WriteLine(CustomerID);
+        foreach (var dItem in dictionaries.Items.values)
+        {
+            Item = dItem;
+            break;
+        }
+        //Console.WriteLine(ItemID);
+        foreach (var Terms in dictionaries.Terms)
+        {
+            TermsID = Terms.Value.value.Value.ToString();
+            break;
+        }
+        //Console.WriteLine(TermsID);
+        foreach (var Warehouse in dictionaries.Warehouses)
+        {
+            WarehouseID = Warehouse.Value.value.Value.ToString();
+            break;
+        }
+        //Console.WriteLine(WarehouseID);
+        foreach (var Employee in dictionaries.Employees)
+        {
+            EmployeeID = Employee.Value.value.Value.ToString();
+            break;
+        }
+        //Console.WriteLine(EmployeeID);
+
+        /*
+        Forms getEmpty header Request.
+        Getting empty record for inserting to Order Header
+        */
+        emptyheader_response = await API.doRequest(emptyheader_method, emptyheader_url + sessionResult.session_id, null);
+        dynamic header = JObject.Parse(emptyheader_response);
+        //filling Header record with data from Dictionaries
+        header.CustomerID = CustomerID;
+        header.EmployeeID = EmployeeID;
+        header.TermsID = TermsID;
+        header.WarehouseID = WarehouseID;
+        
+        Console.WriteLine(header);        
+        /*
+        Forms getEmpty detail Request.
+        Getting empty record for inserting to Order Header
+        */
+        emptydetail_response = await API.doRequest(emptydetail_method, emptydetail_url + sessionResult.session_id, null);
+        dynamic detail = JObject.Parse(emptydetail_response);
+        //creating Header record and getting created record with binded OrderNumber and other system generated fields
+        createheader_response = await API.doRequest(createheader_method, createheader_url + sessionResult.session_id, createheader_request = header.ToString());
+        header = JObject.Parse(createheader_response);
+        
+        //filling Detail record with data from Dictionaries
+        detail.OrderNumber = header.OrderNumber;
+        detail.ItemID = Item["ItemID"];
+        detail.Description = Item["ItemID"];
+        detail.ItemUnitPrice = detail.ItemCost = Item["Price"];
+        detail.OrderQty = 20;
+        Console.WriteLine(detail);
+
+        //creating Detail record
+        dynamic details = new JArray();
+        //adding two same detail records, but you can to add any numbers of different details
+        details.Add(detail);
+        details.Add(detail);
+        createdetail_response = await API.doRequest(createdetail_method, createdetail_url + sessionResult.session_id, createdetail_request = details.ToString());
+
+        //post
+        post_request = "{ \"OrderNumber\" : \"" + header.OrderNumber + "\"}";
+        post_response = await API.doRequest(post_method, post_url + sessionResult.session_id, post_request);
+        //pick&pack
+        pick_request = "{ \"OrderNumbers\" : \"" + header.OrderNumber + "\"}";
+        pick_response = await API.doRequest(pick_method, pick_url + sessionResult.session_id, pick_request);
+        //ship
+        ship_request = "{ \"OrderNumbers\" : \"" + header.OrderNumber + "\"}";
+        ship_response = await API.doRequest(ship_method, ship_url + sessionResult.session_id, ship_request);
+        //invoice
+        invoice_request = "{ \"OrderNumbers\" : \"" + header.OrderNumber + "\"}";
+        invoice_response = await API.doRequest(invoice_method, invoice_url + sessionResult.session_id, invoice_request);
+        //receive payment
+        //get order
+        
+        StateHasChanged();
+    }
+}
