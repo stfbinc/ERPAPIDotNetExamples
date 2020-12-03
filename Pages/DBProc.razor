@@ -1,0 +1,186 @@
+@page "/DBProc"
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+
+<h1>Request URL:</h1>@login_url
+<br/>
+<h1>Request Method:</h1>@login_method
+<br/>
+<h1>Request Body:</h1><pre>@login_request </pre>
+
+<h1>Response:</h1><pre>@login_response </pre>
+<br/>
+<br/>
+<div style="border:1px solid red;"></div>
+
+
+<h1>Request URL:</h1>@list_url
+<br/>
+<h1>Request Method:</h1>@list_method
+<br/>
+<h1>Request Body:</h1><pre>@list_request </pre>
+<br/>
+<h1>Response:</h1><pre>@list_response </pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@orderdef_url
+<br/>
+<h1>Request Method:</h1>@orderdef_method
+<br/>
+<h1>Request Body:</h1><pre>@orderdef_request </pre>
+<br/>
+<h1>Response:</h1><pre>@orderdef_response </pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@ordercall_url
+<br/>
+<h1>Request Method:</h1>@ordercall_method
+<br/>
+<h1>Request Body:</h1><pre>@ordercall_request </pre>
+<br/>
+<h1>Response:</h1><pre>@ordercall_response </pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@purchasedef_url
+<br/>
+<h1>Request Method:</h1>@purchasedef_method
+<br/>
+<h1>Request Body:</h1><pre>@purchasedef_request </pre>
+<br/>
+<h1>Response:</h1><pre>@purchasedef_response </pre>
+<br/>
+<div style="border:1px solid red;"></div>
+
+<h1>Request URL:</h1>@purchasecall_url
+<br/>
+<h1>Request Method:</h1>@purchasecall_method
+<br/>
+<h1>Request Body:</h1><pre>@purchasecall_request </pre>
+<br/>
+<h1>Response:</h1><pre>@purchasecall_response </pre>
+<br/>
+
+@code{
+    /*
+    Request URL for Login action
+    */
+    public string login_url = "/index.php?page=api&module=auth&action=login";
+    public string login_method = "POST";
+    public string login_request = "";
+    public string login_response = "";
+
+
+    /*
+    Request URL for List Functions and Procs
+    */
+    public string list_url = "/index.php?page=api&module=forms&path=API/System/DB&action=procedure&procedure=listFuncsAndProcs&session_id=";
+    public string list_method = "POST";
+    public string list_request = "";
+    public string list_response = "";
+
+    /*
+    Request URL for getting definition of Order Post
+    */
+    public string orderdef_url = "/index.php?page=api&module=forms&path=API/System/DB&action=procedure&procedure=getFuncOrProcDefinition&session_id=";
+    public string orderdef_method = "POST";
+    public string orderdef_request = "";
+    public string orderdef_response = "";
+
+    /*
+    Request URL for calling Order Post
+    */
+    public string ordercall_url = "/index.php?page=api&module=forms&path=API/System/DB&action=procedure&procedure=callFuncOrProc&session_id=";
+    public string ordercall_method = "POST";
+    public string ordercall_request = "";
+    public string ordercall_response = "";
+
+    /*
+    Request URL for getting definition of Purchase Post
+    */
+    public string purchasedef_url = "/index.php?page=api&module=forms&path=API/System/DB&action=procedure&procedure=getFuncOrProcDefinition&session_id=";
+    public string purchasedef_method = "POST";
+    public string purchasedef_request = "";
+    public string purchasedef_response = "";
+
+    /*
+    Request URL for calling Purchase Post
+    */
+    public string purchasecall_url = "/index.php?page=api&module=forms&path=API/System/DB&action=procedure&procedure=callFuncOrProc&session_id=";
+    public string purchasecall_method = "POST";
+    public string purchasecall_request = "";
+    public string purchasecall_response = "";
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender){
+        if(firstRender)
+        APIRequests();
+    }
+
+    public async void APIRequests(){
+        dynamic body = new JObject();
+        /*Credentials for Login request*/
+        body.CompanyID = "DINOS";
+        body.DivisionID = "DEFAULT";
+        body.DepartmentID = "DEFAULT";
+        body.EmployeeID = "Admin";
+        body.EmployeePassword = "AdminAdmin";
+        body.language = "english";
+
+        /*
+        Login request. Request Body is JSON, Response body is JSON
+        Response is json like:
+        {
+            "session_id": "aud8s4l449frcnponmv1ithvoo",
+            "companies": [],
+            "message": "ok"
+        }
+        Where session_id is uuid, which used for any other API request
+        */
+        login_response = await API.doRequest(this.login_method, this.login_url, this.login_request = body.ToString());
+        dynamic sessionResult = JObject.Parse(login_response);
+
+        //List all Functions and Procedures
+        dynamic list_request = new JObject();
+        list_request.CompanyID = "DINOS";
+        list_request.DivisionID = "DEFAULT";
+        list_request.DepartmentID = "DEFAULT";
+        list_request.name = "Order_Post";
+
+        list_response = await API.doRequest(list_method, list_url + sessionResult.session_id, this.list_request = list_request.ToString());
+
+        //Get a definition of Procedure
+        dynamic orderdef_request = new JObject();
+        orderdef_request.name = "Order_Post";
+        orderdef_response = await API.doRequest(orderdef_method, orderdef_url + sessionResult.session_id, this.orderdef_request = orderdef_request.ToString());
+
+        //Call Procedure
+        dynamic ordercall_request = new JObject();
+        ordercall_request.name = "Order_Post";
+        ordercall_request["parameters"] = new JObject();
+        ordercall_request["parameters"].CompanyID = "DINOS";
+        ordercall_request["parameters"].DivisionID = "DEFAULT";
+        ordercall_request["parameters"].DepartmentID = "DEFAULT";
+        ordercall_request["parameters"].OrderNumber = "2190";
+        ordercall_response = await API.doRequest(ordercall_method, ordercall_url + sessionResult.session_id, this.ordercall_request = ordercall_request.ToString());
+
+        //Get a definition of Procedure
+        dynamic purchasedef_request = new JObject();
+        purchasedef_request.name = "Purchase_Post";
+        purchasedef_response = await API.doRequest(purchasedef_method, purchasedef_url + sessionResult.session_id, this.purchasedef_request = purchasedef_request.ToString());
+
+        //Call Procedure
+        dynamic purchasecall_request = new JObject();
+        purchasecall_request.name = "Purchase_Post";
+        purchasecall_request["parameters"] = new JObject();
+        purchasecall_request["parameters"].CompanyID = "DINOS";
+        purchasecall_request["parameters"].DivisionID = "DEFAULT";
+        purchasecall_request["parameters"].DepartmentID = "DEFAULT";
+        purchasecall_request["parameters"].PurchaseNumber = "2096";
+        purchasecall_response = await API.doRequest(purchasecall_method, purchasecall_url + sessionResult.session_id, this.purchasecall_request = purchasecall_request.ToString());
+
+        StateHasChanged();
+    }
+}
